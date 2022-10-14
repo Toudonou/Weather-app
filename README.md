@@ -8,9 +8,8 @@ An application that provides the weather a your location and all over the globe
 ## Features 
 - [x] Use wheather api
 - [ ] Detect your position and gives you the current weather, the weather three days ago and the weather in three days in the future
-- [ ] Search other city and add them as favorite
+- [x] Add favorite cities
 - [x] Have tthe weather three days ago and the weather in three days in the future for other location 
-- [ ] have the current weather for random city in your continent
 
 ## Author
 Weather Motion is developed by [@Toudonou](https://github.com/Toudonou)
