@@ -25,17 +25,12 @@ class MyApp extends StatelessWidget {
     // <application
     //        android:usesCleartextTraffic="true">
     List<String> listFavorite = [
-      "Dangbo",
-      "New-York",
-      "Paris",
-      "Cotonou",
-      "Londres",
     ];
     return MaterialApp(
       title: 'Weather Motion',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: Colors.red,
         scaffoldBackgroundColor: bgColor,
       ),
       home: HomeScreen(

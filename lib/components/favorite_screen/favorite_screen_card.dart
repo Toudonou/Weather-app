@@ -13,8 +13,14 @@ class FavoriteCard extends StatefulWidget {
   String name;
   int id;
   double width;
+  List<String> listFavoriteName;
+
   FavoriteCard(
-      {Key? key, required this.name, required this.id, required this.width})
+      {Key? key,
+      required this.name,
+      required this.id,
+      required this.width,
+      required this.listFavoriteName})
       : super(key: key);
 
   @override
@@ -24,6 +30,7 @@ class FavoriteCard extends StatefulWidget {
 class _FavoriteCardState extends State<FavoriteCard> {
   WeatherApiClient currentLocation = WeatherApiClient();
   Weather? WeatherLocation;
+
   @override
   void initState() {
     Timer.periodic(Duration(milliseconds: 500), (timer) {
@@ -84,6 +91,7 @@ class _FavoriteCardState extends State<FavoriteCard> {
                           uv: WeatherLocation!.uv,
                           is_day: WeatherLocation!.is_day,
                         ),
+                        listFavoriteName: widget.listFavoriteName,
                       ),
                     );
                   }));
@@ -106,7 +114,9 @@ class _FavoriteCardState extends State<FavoriteCard> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Hero(tag:"favoriteLocationCityHeroTag${WeatherLocation!.city}",
+                        Hero(
+                          tag:
+                              "favoriteLocationCityHeroTag${WeatherLocation!.city}",
                           child: Text(
                             WeatherLocation!.city!,
                             softWrap: false,
@@ -117,7 +127,9 @@ class _FavoriteCardState extends State<FavoriteCard> {
                             ),
                           ),
                         ),
-                        Hero(tag:"favoriteLocationTempHeroTag${WeatherLocation!.city}",
+                        Hero(
+                          tag:
+                              "favoriteLocationTempHeroTag${WeatherLocation!.city}",
                           child: Text(
                             "${WeatherLocation!.temp!}°",
                             softWrap: false,

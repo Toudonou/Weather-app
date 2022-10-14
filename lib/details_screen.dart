@@ -9,6 +9,7 @@ import 'package:date_format/date_format.dart';
 
 class DetailsScreen extends StatefulWidget {
   Weather weather;
+
   DetailsScreen({Key? key, required this.weather}) : super(key: key);
 
   @override
@@ -33,6 +34,12 @@ class _DetailsScreenState extends State<DetailsScreen> {
       setState(() {});
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override

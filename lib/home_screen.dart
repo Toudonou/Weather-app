@@ -4,18 +4,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:weather_motion/components/home_screen/favorite_screen.dart';
 import 'package:weather_motion/components/home_screen/header.dart';
-import 'package:weather_motion/components/home_screen/search.dart';
 import 'package:weather_motion/components/home_screen/weather_display.dart';
+import 'package:weather_motion/components/list_city.dart';
 import 'package:weather_motion/weather_api.dart';
 import 'package:weather_motion/constants.dart';
 import 'package:weather_motion/weather.dart';
 import 'package:day/day.dart';
 import 'package:date_format/date_format.dart';
+import 'package:location/location.dart';
 
 int globalDayId = 0;
 
 class HomeScreen extends StatefulWidget {
   List<String> listFavoriteName;
+
   HomeScreen({Key? key, required this.listFavoriteName}) : super(key: key);
 
   @override
@@ -25,6 +27,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   WeatherApiClient currentLocation = WeatherApiClient();
   Weather? WeatherLocation;
+  String? currentLocationName;
+
   @override
   void initState() {
     Timer.periodic(Duration(milliseconds: 500), (timer) {
@@ -37,7 +41,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> get() async {
     if (globalDayId == 0) {
-      WeatherLocation = await currentLocation.getCurrentWeather("Porto-Novo");
+      WeatherLocation =
+      await currentLocation.getCurrentWeather(currentLocationName!);
     } else if (globalDayId < 0) {
       final now = Day();
       String now_string = now.add(globalDayId, "date").toString();
@@ -52,17 +57,20 @@ class _HomeScreenState extends State<HomeScreen> {
           now_string[8] +
           now_string[9];
       WeatherLocation =
-          await currentLocation.getPassWeather("Porto-Novo", date);
+      await currentLocation.getPassWeather(currentLocationName!, date);
     } else {
       WeatherLocation =
-          await currentLocation.getForecastWeather("Porto-Novo", globalDayId);
+      await currentLocation.getForecastWeather(
+          currentLocationName!, globalDayId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     get();
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery
+        .of(context)
+        .size;
     int indexCurrentDay = 0;
     List<String> daysList = [
       "Monday",
@@ -73,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "Saturday",
       "Sunday",
     ];
+    final now = Day();
 
     for (var i in daysList) {
       if (i == formatDate(DateTime.now(), [DD])) {
@@ -88,40 +97,48 @@ class _HomeScreenState extends State<HomeScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HeaderHomeScreen(dayMoment: "Afternoon"),
+            HeaderHomeScreen(
+                dayMoment: now.get("h")! < 6
+                    ? "Night"
+                    : 6 <= now.get("h")! && now.get("h")! <= 12
+                    ? "Morning"
+                    : 12 < now.get("h")! && now.get("h")! <= 15
+                    ? "Afternoon"
+                    : 15 < now.get("h")! && now.get("h")! <= 18
+                    ? "Evening"
+                    : "Night"),
             SizedBox(height: 0.019 * size.height),
-            Search(),
-            SizedBox(height: 0.038 * size.height),
+            SizedBox(height: 0.058 * size.height),
             WeatherLocation != null
                 ? WeatherDisplay(
-                    weather: Weather(
-                        city: WeatherLocation!.city,
-                        temp: WeatherLocation!.temp,
-                        image: WeatherLocation!.image,
-                        text: WeatherLocation!.text,
-                        wind_speed: WeatherLocation!.wind_speed,
-                        humidity: WeatherLocation!.humidity,
-                        uv: WeatherLocation!.uv,
-                        is_day: WeatherLocation!.is_day),
-                    height: 0.1785 * size.height,
-                    width: 0.944 * size.width,
-                    borderRadius: 15,
-                  )
+              weather: Weather(
+                  city: WeatherLocation!.city,
+                  temp: WeatherLocation!.temp,
+                  image: WeatherLocation!.image,
+                  text: WeatherLocation!.text,
+                  wind_speed: WeatherLocation!.wind_speed,
+                  humidity: WeatherLocation!.humidity,
+                  uv: WeatherLocation!.uv,
+                  is_day: WeatherLocation!.is_day),
+              height: 0.1785 * size.height,
+              width: 0.944 * size.width,
+              borderRadius: 15,
+            )
                 : Row(
-                    children: [
-                      SizedBox(width: appMargin),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.greenAccent,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        height: 0.1785 * size.height,
-                        width: 0.944 * size.width,
-                        child: Center(child: CircularProgressIndicator()),
-                      ),
-                      SizedBox(width: appMargin),
-                    ],
+              children: [
+                SizedBox(width: appMargin),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.greenAccent,
+                    borderRadius: BorderRadius.circular(15),
                   ),
+                  height: 0.1785 * size.height,
+                  width: 0.944 * size.width,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+                SizedBox(width: appMargin),
+              ],
+            ),
             SizedBox(height: 0.019 * size.height),
             Row(
               children: [
@@ -147,14 +164,40 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               children: [
                 SizedBox(width: appMargin),
-                Text(
-                  "Favorite Location",
-                  style: TextStyle(
-                    fontFamily: appFont,
-                    color: Colors.white,
-                    fontSize: 0.083 * size.width,
+                Expanded(
+                  child: Text(
+                    "Favorite Location",
+                    style: TextStyle(
+                      fontFamily: appFont,
+                      color: Colors.white,
+                      fontSize: 0.083 * size.width,
+                    ),
                   ),
                 ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(context, PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) {
+                          final curveAnimation = CurvedAnimation(
+                              parent: animation, curve: Interval(0, 0.5));
+
+                          return SlideTransition(
+                            position: Tween<Offset>(
+                                begin: Offset(1.0, 0.0), end: Offset.zero)
+                                .animate(curveAnimation),
+                            child: ListFavorite(
+                              id: globalDayId,
+                              listFavoriteName: widget.listFavoriteName,
+                            ),
+                          );
+                        }));
+                  },
+                  icon: CircleAvatar(
+                    backgroundColor: Colors.blueGrey,
+                    child: Icon(Icons.add),
+                  ),
+                ),
+                SizedBox(height: 15),
               ],
             ),
             SizedBox(height: 15),
@@ -170,12 +213,15 @@ class _HomeScreenState extends State<HomeScreen> {
 class DaySelector extends StatelessWidget {
   final String dayName;
   final int id;
+
   const DaySelector({Key? key, required this.dayName, required this.id})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery
+        .of(context)
+        .size;
     return GestureDetector(
       onTap: () {
         globalDayId = id;

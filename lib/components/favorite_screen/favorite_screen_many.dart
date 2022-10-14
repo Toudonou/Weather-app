@@ -7,6 +7,7 @@ class FavoriteScreenMany extends StatefulWidget {
   List<String> listFavorite;
   int id;
   double width;
+
   FavoriteScreenMany(
       {Key? key,
       required this.listFavorite,
@@ -31,6 +32,7 @@ class _FavoriteScreenManyState extends State<FavoriteScreenMany> {
             name: widget.listFavorite[index],
             id: widget.id,
             width: widget.width,
+            listFavoriteName: widget.listFavorite,
           );
         },
       ),

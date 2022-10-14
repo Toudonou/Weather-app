@@ -7,8 +7,12 @@ import 'package:weather_motion/weather.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 class WeatherFavoriteDetails extends StatefulWidget {
+  List<String> listFavorteName;
   Weather weather;
-  WeatherFavoriteDetails({Key? key, required this.weather}) : super(key: key);
+
+  WeatherFavoriteDetails(
+      {Key? key, required this.weather, required this.listFavorteName})
+      : super(key: key);
 
   @override
   State<WeatherFavoriteDetails> createState() => _WeatherFavoriteDetailsState();
@@ -39,17 +43,31 @@ class _WeatherFavoriteDetailsState extends State<WeatherFavoriteDetails> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(height: 10),
-            Hero(
-              tag: "favoriteLocationCityHeroTag${widget.weather.city}",
-              child: Text(
-                widget.weather.city!,
-                softWrap: false,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: appFont,
-                  fontSize: 0.17 * size.width / 2,
+            Row(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Hero(
+                      tag: "favoriteLocationTempHeroTag${widget.weather.city}",
+                      child: Text(
+                        widget.weather.city!,
+                        softWrap: false,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: appFont,
+                          fontSize: 0.17 * size.width / 2,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                IconButton(
+                    onPressed: () {
+                      widget.listFavorteName.remove(widget.weather.city!);
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.delete, color: Colors.red))
+              ],
             ),
             Expanded(
               flex: 3,
@@ -66,18 +84,6 @@ class _WeatherFavoriteDetailsState extends State<WeatherFavoriteDetails> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Hero(
-                  tag: "favoriteLocationTempHeroTag${widget.weather.city}",
-                  child: Text(
-                    "  ${widget.weather.temp!}°",
-                    softWrap: false,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: "Archivo",
-                      fontSize: 0.15 * 0.75 * size.height,
-                    ),
-                  ),
-                ),
                 AnimatedTextKit(
                   animatedTexts: [
                     TypewriterAnimatedText(
@@ -88,7 +94,7 @@ class _WeatherFavoriteDetailsState extends State<WeatherFavoriteDetails> {
                         fontFamily: "Archivo",
                         fontSize: 0.034 * 0.75 * size.height,
                       ),
-                      speed: const Duration(milliseconds: 200),
+                      speed: const Duration(milliseconds: 75),
                       cursor: " ",
                     ),
                   ],

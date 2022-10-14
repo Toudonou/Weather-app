@@ -21,6 +21,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     final size = MediaQuery.of(context).size;
     return widget.listFavoriteName.isEmpty
         ? Container(
+            margin: EdgeInsets.all(10),
             padding: EdgeInsets.all(0),
             width: 0.944 * size.width,
             height: 0.331 * size.height,

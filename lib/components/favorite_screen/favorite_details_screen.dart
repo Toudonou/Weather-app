@@ -9,7 +9,11 @@ import 'package:date_format/date_format.dart';
 
 class FavoriteDetailsScreen extends StatefulWidget {
   Weather weather;
-  FavoriteDetailsScreen({Key? key, required this.weather}) : super(key: key);
+  List<String> listFavoriteName;
+
+  FavoriteDetailsScreen(
+      {Key? key, required this.weather, required this.listFavoriteName})
+      : super(key: key);
 
   @override
   State<FavoriteDetailsScreen> createState() => _FavoriteDetailsScreenState();
@@ -51,7 +55,9 @@ class _FavoriteDetailsScreenState extends State<FavoriteDetailsScreen> {
       ),
       body: Column(
         children: [
-          WeatherFavoriteDetails(weather: widget.weather),
+          WeatherFavoriteDetails(
+              weather: widget.weather,
+              listFavorteName: widget.listFavoriteName),
           Expanded(
             child: LineChart(
               LineChartData(

@@ -8,6 +8,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 
 class WeatherDetails extends StatefulWidget {
   Weather weather;
+
   WeatherDetails({Key? key, required this.weather}) : super(key: key);
 
   @override
@@ -91,7 +92,7 @@ class _WeatherDetailsState extends State<WeatherDetails> {
                         fontFamily: "Archivo",
                         fontSize: 0.034 * 0.75 * size.height,
                       ),
-                      speed: const Duration(milliseconds: 200),
+                      speed: const Duration(milliseconds: 100),
                       cursor: " ",
                     ),
                   ],
